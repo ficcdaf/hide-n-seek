@@ -1,3 +1,4 @@
+use anyhow::anyhow;
 use chacha20poly1305::{
     aead::{stream, NewAead},
     XChaCha20Poly1305,
@@ -7,7 +8,6 @@ use std::{
     fs::File,
     io::{Read, Write},
 };
-use anyhow::anyhow;
 // Encryption code learned from Sylvain Kerkour
 pub fn encrypt_file(
     source_path: &str,
@@ -66,7 +66,7 @@ pub fn decrypt_file(
                 .decrypt_next(buffer.as_slice())
                 .map_err(|err| anyhow!("Decrypting file: {}", err))?;
             dest_file.write(&plain_text)?;
-        } else if read_count == 0{
+        } else if read_count == 0 {
             break;
         } else {
             let plain_text = stream_decryptor
@@ -80,15 +80,13 @@ pub fn decrypt_file(
     Ok(())
 }
 
-pub fn generate_key()
-    -> [u8; 32] {
+pub fn generate_key() -> [u8; 32] {
     let mut key = [0u8; 32];
     OsRng.fill_bytes(&mut key);
     return key;
 }
 
-pub fn generate_nonce()
-    -> [u8; 19] {
+pub fn generate_nonce() -> [u8; 19] {
     let mut nonce = [0u8; 19];
     OsRng.fill_bytes(&mut nonce);
     return nonce;
